@@ -19,16 +19,32 @@ public class Messages
     {
         string[] options =
         {
-            "Exit this menu",
+            "Exit this app",
             "Go one level up",
             "See files here"
         };
         return options;
     }
+    public static string FileMenuMessage = "Choose a file to parse, or go back to folders\n";
     public static string[] preFileMenuOptions()
     {
         return [
             "Back to folders"
         ];
+    }
+    public static string wrongFileType = "We can only work with '.docx' files, at this point.\nChoose a file of the correct format.";
+    public static string[] PreParseFileMenuOptions()
+    {
+        string[] options =
+        {
+            "Exit this file",
+            "Extract this element's text"
+            
+        };
+        return options;
+    }
+    public static string ParseFileMenuMessage()
+    {
+        return $"You're looking at file: {FileBrowse.GetFileOrDirName(FileBrowse.currentUri)},\nin: {FileBrowse.GetFileContainingDirName()}\n\nChoose from the options, what you want to do here:";
     }
 }

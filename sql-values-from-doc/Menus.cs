@@ -3,6 +3,7 @@ namespace menus;
 using System.Text.RegularExpressions;
 using file_browse;
 using messages;
+using parse_word_doc;
 public class Menus
 {
     public static void Speak(string message)
@@ -10,10 +11,6 @@ public class Menus
         Console.WriteLine(message);
     }
 
-    // public static string ValidateUserInput(string input)
-    // {
-    //     return Regex.Replace(input.Trim(), )
-    // }
     public static string NonNullUserInput()
     {
         bool notNull = true;
@@ -100,11 +97,67 @@ public class Menus
                     FileBrowse.UpOneLevel();
                     break;
                 case 2:
+                    FileMenu();
                     break;
                 default:
                     FileBrowse.DownOneLevel(FileBrowse.SubDirNames()[choice - 3]);
                     break;
             }    
+        }
+    }
+
+    public static void FileMenu()
+    {
+        bool exit = false;
+        while(exit == false)
+        {
+            int choice = Menu(Messages.FileMenuMessage, FileBrowse.FileMenuOptions());
+            switch (choice)
+            {
+                case 0:
+                    exit = true;
+                    FileBrowse.UpOneLevel();
+                    break;
+                default:
+                    FileBrowse.DownOneLevel(FileBrowse.FileNames()[choice - 1]);
+                    if(ParseWordDoc.ValidFileType() == true)
+                    {
+                        ParseWordDoc.OpenDoc();
+                        ParseFileMenu();
+                    }
+                    else
+                    {
+                        Speak(Messages.wrongFileType);
+                        FileBrowse.UpOneLevel();
+                    }
+                    break;
+            }            
+        }
+    }
+
+    public static void ParseFileMenu()
+    {
+        bool exit = false;
+        while(exit == false)
+        {
+            int choice = Menu(Messages.ParseFileMenuMessage(), ParseWordDoc.ParseFileMenuOptions());
+            switch (choice)
+            {
+                case 0:
+                    exit = true;
+                    ParseWordDoc.CloseDoc();
+                    FileBrowse.UpOneLevel();
+                    break;
+                case 1:
+                    ParseWordDoc.GetSqlValuesLines();
+                    FileBrowse.UpOneLevel();
+                    exit = true;
+                    break;
+                default:
+                    exit = true;
+                    FileBrowse.UpOneLevel();
+                    break;
+            }
         }
     }
 }

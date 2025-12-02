@@ -49,6 +49,13 @@ public class FileBrowse
         return names.ToArray();
     }
 
+    public static string GetFileContainingDirName()
+    {
+        string name = "";
+        name = currentUri.Substring(0, currentUri.Length - (currentUri.Length - currentUri.LastIndexOf('\\')));
+        return name;
+    }
+
     public static string[] FileNames()
     {
         List<string> names = new List<string>();
@@ -75,7 +82,7 @@ public class FileBrowse
         string[] fileNames = FileNames();
         for(int i = 0; i < fileNames.Length; i++)
         {
-            fileNames[i] = $"Open -> {fileNames[i]}";
+            fileNames[i] = $"Parse -> {fileNames[i]}";
         }
         string[] options = Messages.preFileMenuOptions().Concat(fileNames).ToArray();
         return options;
