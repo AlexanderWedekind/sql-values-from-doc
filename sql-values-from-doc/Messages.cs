@@ -1,5 +1,6 @@
 namespace messages;
 
+using System.ComponentModel.DataAnnotations;
 using file_browse;
 public class Messages
 {
@@ -38,13 +39,20 @@ public class Messages
         string[] options =
         {
             "Exit this file",
-            "Extract this element's text"
-            
+            "Next paragraph",
+            "Previous paragraph",
+            "Extract this element's text as is",
+            "Edit this paragraph text before extracting",
+            "Finish with this file, and create the final output"
         };
         return options;
     }
     public static string ParseFileMenuMessage()
     {
-        return $"You're looking at file: {FileBrowse.GetFileOrDirName(FileBrowse.currentUri)},\nin: {FileBrowse.GetFileContainingDirName()}\n\nChoose from the options, what you want to do here:";
+        return $"You're looking at file: {FileBrowse.GetFileOrDirName(FileBrowse.currentUri)},\nin: {FileBrowse.GetFileContainingDirName()}\n\n" + 
+        "Displaying text one paragraph at a time. Choose from the options for each:";
     }
+    public static string lastParagraphMessage = "This is the last paragragraph in this word document; choose a different option:\n";
+    public static string firstParagraphMessage = "This is the first paragraph, there are no paragraphs in front of this one; choose a different options:\n";
+    public static string pressKeyToContinue = "(press any key to continue)";
 }

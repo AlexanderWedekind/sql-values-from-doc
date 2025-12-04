@@ -1,6 +1,7 @@
 namespace menus;
 
 using System.Text.RegularExpressions;
+using compose_final_output;
 using file_browse;
 using messages;
 using parse_word_doc;
@@ -73,7 +74,7 @@ public class Menus
     }
     public static int Menu(string message, string[] options)
     {
-        Speak(message);
+        Speak($"{Messages.newLine}{message}");
         for(int i = 0; i < options.Length; i++)
         {
             Speak($"- [{i}]: {options[i]}");
@@ -108,6 +109,7 @@ public class Menus
 
     public static void FileMenu()
     {
+        ComposeFinalOutput.GetOutputDir();
         bool exit = false;
         while(exit == false)
         {
@@ -116,13 +118,14 @@ public class Menus
             {
                 case 0:
                     exit = true;
-                    FileBrowse.UpOneLevel();
+                    //FileBrowse.UpOneLevel();
                     break;
                 default:
                     FileBrowse.DownOneLevel(FileBrowse.FileNames()[choice - 1]);
                     if(ParseWordDoc.ValidFileType() == true)
                     {
                         ParseWordDoc.OpenDoc();
+                        ParseWordDoc.GetOpenDocParagraphs();
                         ParseFileMenu();
                     }
                     else
@@ -137,21 +140,58 @@ public class Menus
 
     public static void ParseFileMenu()
     {
+        // "Exit this file",
+        // "Next paragraph",
+        // "Previous paragraph",
+        // "Extract this element's text as is",
+        // "Edit this text before extracting",
+        // "Finish with this file, and create the final output"
+
+        ComposeFinalOutput.GetOutputFileName();
+        ComposeFinalOutput.GetOutputFilePath();
+        Speak($"{Messages.newLine}{Messages.ParseFileMenuMessage()}");
+        int targetParagraphNr = 0;
         bool exit = false;
         while(exit == false)
         {
-            int choice = Menu(Messages.ParseFileMenuMessage(), ParseWordDoc.ParseFileMenuOptions());
+            int choice = Menu($"{ParseWordDoc.GetTargetParagraphText(targetParagraphNr)}{Messages.newLine}", ParseWordDoc.ParseFileMenuOptions());
             switch (choice)
             {
                 case 0:
                     exit = true;
                     ParseWordDoc.CloseDoc();
+                    ParseWordDoc.ClearDocParagraphs();
                     FileBrowse.UpOneLevel();
                     break;
                 case 1:
-                    ParseWordDoc.GetSqlValuesLines();
-                    FileBrowse.UpOneLevel();
+                    targetParagraphNr++;
+                    if(targetParagraphNr >= ParseWordDoc.openDocParagraphs.Length)
+                    {
+                        Menus.Speak($"{Messages.newLine}{Messages.lastParagraphMessage}");
+                        targetParagraphNr--;
+                    }
+                    break;
+                case 2:
+                    targetParagraphNr--;
+                    if(targetParagraphNr < 0)
+                    {
+                        Menus.Speak($"{Messages.newLine}{Messages.firstParagraphMessage}");
+                        targetParagraphNr++;
+                    }
+                    break;
+                case 3:
+                    ComposeFinalOutput.AddExtractedText(targetParagraphNr);
+                    Menus.Speak($"{Messages.newLine}-- Done --");
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    ComposeFinalOutput.FinalOutputToConsole();
+                    ComposeFinalOutput.CreateOutputFile();
                     exit = true;
+                    ParseWordDoc.CloseDoc();
+                    ParseWordDoc.ClearDocParagraphs();
+                    FileBrowse.UpOneLevel();
                     break;
                 default:
                     exit = true;

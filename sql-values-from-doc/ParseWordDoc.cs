@@ -6,6 +6,8 @@ using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Wordprocessing;
 using file_browse;
 using messages;
+using DocumentFormat.OpenXml.Office.CustomUI;
+using menus;
 
 public class ParseWordDoc
 {
@@ -30,12 +32,31 @@ public class ParseWordDoc
         return valid;
     }
 
+    public static DocumentFormat.OpenXml.Wordprocessing.Paragraph[] openDocParagraphs = [];
+
     public static string[] ParseFileMenuOptions()
     {
         string[] options = [];
         options = Messages.PreParseFileMenuOptions();
         return options;
     }
+
+    public static void GetOpenDocParagraphs()
+    {
+        openDocParagraphs = doc.MainDocumentPart.Document.Body.Descendants<DocumentFormat.OpenXml.Wordprocessing.Paragraph>().ToArray();
+        
+    }
+
+    public static void ClearDocParagraphs()
+    {
+        openDocParagraphs = [];
+    }
+
+    public static string GetTargetParagraphText(int index)
+    {
+        return openDocParagraphs[index].InnerText;
+    }
+
     public static void GetSqlValuesLines()
     {
         DocumentFormat.OpenXml.Wordprocessing.Paragraph[] paragraphs = doc.MainDocumentPart.Document.Body.Descendants<DocumentFormat.OpenXml.Wordprocessing.Paragraph>().ToArray();
